@@ -1,0 +1,49 @@
+﻿@page "/energyprices"
+@using EnergyApp.Services
+@using EnergyApp.Models
+@using Newtonsoft.Json
+@inject HttpClient _http
+@inject IPriceService _pservice
+
+<PageTitle>Energy Prices</PageTitle>
+
+<h1>Energy Prices</h1>
+
+@if (_items == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Time</th>
+            <th>DKK/kWh</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (DataItem item in _items)
+        {
+            <tr>
+                <td>@($"{item.StartTime:00} - {item.EndTime:00}")</td>
+                <td>@(item.Value/1000)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<DataItem>? _items = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        string date = "2022-05-31";
+        HttpResponseMessage responseMessage = await _http.GetAsync("http://localhost:5035/api/Price?stringDate=" + date);
+        string content = await responseMessage.Content.ReadAsStringAsync();
+        _items = JsonConvert.DeserializeObject<List<DataItem>>(content);
+    }
+}
