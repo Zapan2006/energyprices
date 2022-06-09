@@ -16,13 +16,13 @@ namespace EnergyPrices.Controllers
         }
 
         [HttpGet]
-        public async Task<List<DataItem>> Get([FromQuery]string stringDate, int? bestAmount = null)
+        public async Task<List<DataItem>> Get([FromQuery]string date, int? amount = null)
         {
-            DateOnly date = DateOnly.Parse(stringDate);
-            if(bestAmount == null)
-                return await _priceService.ScrapePrices(date).ConfigureAwait(false);
+            DateOnly dateOnly = DateOnly.Parse(date);
+            if(amount == null)
+                return await _priceService.ScrapePrices(dateOnly).ConfigureAwait(false);
             else
-                return await _priceService.ScrapePrices(date, bestAmount.GetValueOrDefault()).ConfigureAwait(false);
+                return await _priceService.ScrapePrices(dateOnly, amount.GetValueOrDefault()).ConfigureAwait(false);
         }
     }
 }
